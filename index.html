@@ -14,15 +14,163 @@
   <meta http-equiv="expires" content="0">
 
   <script>
-   
+   var inputNum = 0; // 输入的数字
+   var inputNumArr = []; // 输入的数字数组
+   var inputLetterArr = []; // 输入的字母数组
+   var numMap = { // 数字对象映射
+    0: [],
+    1: [],
+    2: ['a', 'b', 'c'],
+    3: ['d', 'e', 'f'],
+    4: ['g', 'h', 'i'],
+    5: ['j', 'k', 'l'],
+    6: ['m', 'n', 'o'],
+    7: ['p', 'q', 'r', 's'],
+    8: ['t', 'u', 'v'],
+    9: ['w', 'x', 'y', 'z']
+   }
+   var outputLetterArr = []; // 输出字母组合数组
+
+   // 确定输入的数字
+   function comfireNum() {
+    inputNum = document.getElementById('inputNum').value;
+    if (!(/(^[0-9]\d*$)/.test(inputNum))) { 
+      alert('请输入正确的数值！');
+      return;
+    }
+    if (inputNum < 0 || inputNum > 99) {
+      alert('请输入正确的数值！');
+      return;
+    }
+    // 追加输入数字
+    inputNumArr.push(inputNum);
+    // 追加输入字母数组
+    if (inputNum >= 0 && inputNum <= 9) {
+      inputLetterArr.push(numMap[inputNum]);
+    } else {
+      // 十位
+      pos1Num = parseInt(inputNum / 10);
+      tempArr = numMap[pos1Num];
+      // 个位
+      pos2Num = parseInt(inputNum % 10);
+      if (pos1Num !== pos2Num) {
+        tempArr = tempArr.concat(numMap[pos2Num]);
+      }
+      inputLetterArr.push(tempArr);
+    }
+    printInput();
+    document.getElementById('inputNum').value = '';
+    outputLetterArr = []; // 先清空输出
+    for (var i = 0; i < inputLetterArr.length; i++) {
+      dealMerge(inputLetterArr[i]);
+    }
+    printOutput();
+   }
+
+   // 处理字母组合
+   function dealMerge(inArr) {
+    if (outputLetterArr.length === 0) {
+      for (var i = 0; i < inArr.length; i++) {
+        outputLetterArr.push(inArr[i]);
+      }
+    } else {
+      var tmpArr = [];
+      for (var n = 0; n < outputLetterArr.length; n++) {
+        if (inArr.length > 0) {
+          for (var m = 0; m < inArr.length; m++) {
+            tmpArr.push(outputLetterArr[n] + inArr[m]);
+          }
+        } else {
+          tmpArr.push(outputLetterArr[n]);
+        }
+      }
+      // tmpArr 数组去重复
+      tmpArr = unique(tmpArr);
+      outputLetterArr = tmpArr;
+    }
+   }
+
+   // 数组去重
+   function unique(arr) {
+      if (!Array.isArray(arr)) {
+          console.log('type error!');
+          return;
+      }
+      var array = [];
+      for (var i = 0; i < arr.length; i++) {
+          if (array.indexOf(arr[i]) === -1) {
+              array.push(arr[i])
+          }
+      }
+      return array;
+   }
+
+   // 全部重置
+   function allReset() {
+    inputNumArr = [];
+    inputLetterArr = [];
+    outputLetterArr = [];
+    printInput();
+    printOutput();
+    document.getElementById('inputNum').value = '';
+   }
+
+   // 打印输入数字数组
+   function printInput() {
+    var str = '';
+    for (var i = 0; i < inputNumArr.length; i++) {
+      str += inputNumArr[i] + ' '
+    }
+    document.getElementById('inputNumStr').innerHTML = str;
+   }
+
+   // 打印输出字母数组
+   function printOutput() {
+    var str = '';
+    for (var i = 0; i < outputLetterArr.length; i++) {
+      str += outputLetterArr[i] + ' '
+    }
+    document.getElementById('outputLetterStr').innerHTML = str;
+   }
+
   </script>
 </head>
 
 <body>
 
 <div>
-  test
+  0 -- []<br/>
+  1 -- []<br/>
+  2 -- [A,B,C]<br/>
+  3 -- [D,E,F]<br/>
+  4 -- [G,H,I]<br/>
+  5 -- [J,K,L]<br/>
+  6 -- [M,N,O]<br/>
+  7 -- [P,Q,R,S]<br/>
+  8 -- [T,U,V]<br/>
+  9 -- [W,X,Y,Z]
 </div>
+
+<br/>
+<div>
+<input type="button" value="全部重置" onclick="allReset()"/><br/><br/>
+输入数字 0-99(包含了0-9):<br/>
+<input type="text" value="" id="inputNum"/>
+<input type="button" value="确定" onclick="comfireNum()" /><br/>
+</div>
+<br/>
+
+<div>
+  输入的数字为：
+  <span id="inputNumStr"></span>
+</div>
+<br/>
+
+<div>
+  输出的字母组合为：
+  <span id="outputLetterStr"></span>
+</div>
+<br/>
 
 </body>
 
